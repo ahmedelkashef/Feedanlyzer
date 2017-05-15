@@ -18,28 +18,41 @@ import java.util.Scanner;
  */
 public class Utilties {
 
+    private static int negletedMessages =0;
+
+
+
+    public int getNegletedMessages() {
+        return negletedMessages;
+    }
+
+    public void setNegletedMessages(int negletedMessages) {
+        this.negletedMessages = negletedMessages;
+    }
 
     public static void ReadFile(String name) throws IOException {
         FileInputStream inputStream = null;
         Scanner sc = null;
-        String[] separatedItems;
-        ArrayList<Message> messages = new ArrayList<Message>();
 
+        ArrayList<Message> messages = new ArrayList<Message>();
         try {
             inputStream = new FileInputStream(name);
             sc = new Scanner(inputStream, "UTF-8");
-            while (sc.hasNextLine()) {
+             int i =0 ;
+            //while (sc.hasNextLine())
+             while (sc.hasNextLine()) {
+                i++;
+
                 String line = sc.nextLine();
-                //System.out.println(line);
-                Message m = new Message();
-                separatedItems = line.split("(-)|(\\:\\:)");
-              //  System.out.println(separatedItems);
-                m.setDate(toDate(separatedItems[0]));
-                m.setMessageType(separatedItems[1]);
-                m.setSymbolIdentifiers(toSymbol(separatedItems[2]));
-                messages.add(m);
+                //System.out.println( i + "  " + line);
+
+                MapToObject(line , messages);
+
             }
-            System.out.println(messages.size());
+            System.out.println("number of object = " + messages.size() + " \n");
+            System.out.println("number of Neglected Messages = " + negletedMessages + " \n");
+          /*  System.out.println("number of object = " + messages.size() + " \n");
+            System.out.println("number of Neglected Messages = " + negletedMessages + " \n");*/
             if (sc.ioException() != null) {
                 throw sc.ioException();
             }
@@ -50,6 +63,27 @@ public class Utilties {
             if (sc != null) {
                 sc.close();
             }
+        }
+    }
+
+    private static void MapToObject(String line, ArrayList<Message> messages) {
+        String[] separatedItems;
+
+        Message m = new Message();
+        separatedItems = line.split("(-)|(\\:\\:)");
+
+        if(separatedItems.length == 3)
+        {
+            m.setDate(toDate(separatedItems[0]));
+            m.setMessageType(separatedItems[1]);
+            m.setSymbolIdentifiers(toSymbol(separatedItems[2]));
+
+            messages.add(m);
+        }
+        else
+        {
+             negletedMessages++;
+
         }
     }
 
